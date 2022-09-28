@@ -1,68 +1,67 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 import "./styles.css"
 
-function RegisterForm() {
+class RegisterForm extends Component {
   // react States
-  const [errorMessages, setErrorMessages] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  // User registeration info
-  const database = [
-    {
-      username: "user1",
-      password: "pass1"
-    },
-    {
-      username: "user2",
-      password: "pass2"
-    }
-  ];
-
-  const errors = {
-    uname: "invalid username",
-    pass: "invalid password"
+  constructor(props){
+    super(props);
+    this.setErrorMessages= "";
+    this.setIsSubmitted=false;
+    this.state ={
+      password : "",
+      email : "",
+      setErrorMessages: "",
+      setIsSubmitted: false
+    };
+    this.errors.bind(this);
+    this.handleSubmit.bind(this);
+    this.renderErrorMessage.bind(this);
+    this.registrationForm.bind(this);
+  };
+  
+  errors = {
+    email: "username already exist",
   };
 
-  const handleSubmit = (event) => {
+  handleSubmit = (event) => {
     //Prevent page reload
     event.preventDefault();
 
-    var { uname, pass } = document.forms[0];
+    var { email, password } = document.forms[0];
 
     // Find user login info
-    const userData = database.find((user) => user.username === uname.value);
+    const userData = localStorage.getItem(email)
 
     // Compare user info
     if (userData) {
-      if (userData.password !== pass.value) {
-        // Invalid password
-        setErrorMessages({ name: "pass", message: errors.pass });
+      if (userData != null) {
+        // user already exist
+        this.setErrorMessages({ name: email, message: this.errors.email });
       } else {
-        setIsSubmitted(true);
-      }
-    } else {
-      // Username not found
-      setErrorMessages({ name: "uname", message: errors.uname });
-    }
+        this.setIsSubmitted(true);
+        localStorage.setItem(email,[password.value,[]])
+        alert(" User Registered successfully")
+      };
+    };
   };
 
   // Generate JSX code for error message
-  const renderErrorMessage = (name) =>
-    name === errorMessages.name && (
-      <div className="error">{errorMessages.message}</div>
+  renderErrorMessage = (name) =>
+    name === this.state.setErrorMessages.name && (
+      <div className="error">{this.state.setErrorMessages.message}</div>
     );
-    const registrationForm = (
+    registrationForm = (
         <div className="form">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={this.handleSubmit}>
             <div className="input-container">
               <label>Username </label>
               <input type="text" name="uname" required />
-              {renderErrorMessage("uname")}
+              {this.renderErrorMessage("uname")}
             </div>
             <div className="input-container">
               <label>Password </label>
               <input type="password" name="pass" required />
-              {renderErrorMessage("pass")}
+              
             </div>
             <div className="button-container">
               <button type="submit">Register</button>
@@ -71,14 +70,15 @@ function RegisterForm() {
           </form>
         </div>
       );
-    
+     render(){
       return (
         <div className="app">
           <div className="login-form">
             <div className="title">Register</div>
-            {isSubmitted ? <div>User is successfully registered</div> : registrationForm}
+            {this.state.setIsSubmitted ? <div>User is successfully registered</div> : this.registrationForm}
           </div>
         </div>
       );
-    }
+  };
+}
 export default RegisterForm;    

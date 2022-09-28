@@ -1,72 +1,81 @@
-import React, { useState } from "react";
+import React, { Component } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import registerForm from './registerPage'
+import RegisterForm from "./registerPage";
 import "./styles.css";
 
-function App() {
+class App extends Component {
   // React States
-  const [errorMessages, setErrorMessages] = useState({});
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  // User Login info
-  const database = [
-    {
-      username: "user1",
-      password: "pass1"
-    },
-    {
-      username: "user2",
-      password: "pass2"
-    }
-  ];
-
-  const errors = {
-    uname: "invalid username",
-    pass: "invalid password"
+  constructor(props){
+    super(props);
+    this.state = {
+      password : "",
+      email : "",
+      setErrorMessages: "",
+      currentUser: "",
+      IsSubmitted: false
+    };
+    this.errors.bind(this);
+    this.handleSubmit.bind(this);
+    this.renderErrorMessage.bind(this);
+    this.loginForm.bind(this);
+    
   };
 
-  const handleSubmit = (event) => {
+  // User Login info
+ 
+
+ errors = {
+    email: "invalid email",
+    password: "invalid password",
+  };
+
+ handleSubmit = (event) => {
     //Prevent page reload
     event.preventDefault();
 
-    var { uname, pass } = document.forms[0];
+    var { email, password } = document.forms[0];
 
     // Find user login info
-    const userData = database.find((user) => user.username === uname.value);
+    const userData = JSON.parse(localStorage.getItem(email))
+
 
     // Compare user info
     if (userData) {
-      if (userData.password !== pass.value) {
+      if (userData[0] !== password.value) {
         // Invalid password
-        setErrorMessages({ name: "pass", message: errors.pass });
+        this.setState({setErrorMessages:{ name: "password", message: this.state.errors.password }});
       } else {
-        setIsSubmitted(true);
+        this.setState({
+          setIsSubmitted:true,
+          userData
+        });
+        
       }
     } else {
       // Username not found
-      setErrorMessages({ name: "uname", message: errors.uname });
+      this.setState({setErrorMessages:{ name: "email", message: this.state.errors.email }});
     }
   };
 
   // Generate JSX code for error message
-  const renderErrorMessage = (name) =>
-    name === errorMessages.name && (
-      <div className="error">{errorMessages.message}</div>
+  renderErrorMessage = (name) =>
+    name === this.state.seterrorMessages.name && (
+      <div className="error">{this.state.setErrorMessages.message}</div>
     );
 
   // JSX code for login form
-  const renderForm = (
+  loginForm = (
     <div className="form">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={this.handleSubmit}>
         <div className="input-container">
-          <label>Username </label>
-          <input type="text" name="uname" required />
-          {renderErrorMessage("uname")}
+          <label>email</label>
+          <input type="text" name="email" value={this.email} required />
+          {this.renderErrorMessage("email")}
         </div>
         <div className="input-container">
           <label>Password </label>
-          <input type="password" name="pass" required />
-          {renderErrorMessage("pass")}
+          <input type="password" name="pass" value={this.state.password} required />
+          {this.renderErrorMessage("pass")}
         </div>
         <div className="button-container">
           <button type="submit">Sign in</button>
@@ -75,20 +84,28 @@ function App() {
     </div>
   );
 
-  return (
+  //Route for registration form
+  
+render(){
+return (
     <div className="app">
       <div className="login-form">
         <div className="title">Sign In</div>
-        {isSubmitted ? <div>User is successfully logged in</div> : renderForm}
+        {this.state.isSubmitted ? <div>User is successfully logged in</div> : <loginForm/>}
       </div>
-        <Router>
-          <button type="button"><Link to={'/registerPage'} className="nav-link">Register</Link></button>
-        </Router>  
-        <Routes>  
-        <Route path='/registerPage' component={registerForm}/>
-        </Routes>
+      <Routes>
+        <Route path = '/registerPage' element = {<RegisterForm/>}></Route>
+      </Routes>
+      <Router>
+        <button type="button">
+          <Link to={"/registerPage"} className="nav-link">
+            Register
+          </Link>
+        </button>
+      </Router>
     </div>
   );
-}
+};
+};
 
 export default App;
