@@ -1,111 +1,82 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import RegisterForm from "./registerPage";
+import {Link} from "react-router-dom";
 import "./styles.css";
-
+import Todolist from "./todolist";
 class App extends Component {
-  // React States
-  constructor(props){
-    super(props);
-    this.state = {
+  // React States  
+    state = {
       password : "",
       email : "",
-      setErrorMessages: "",
-      currentUser: "",
-      IsSubmitted: false
+      currentUser:{
+        email:"",
+        passwword:"",
+        taskList:[]
+      },
+      isloggedin:false,
+      setErrorMessages:{
+        name:"",
+        message:""
+      },
+      errors : {
+          email: "invalid email",
+          password: "invalid password",
+      }  
     };
-    this.errors.bind(this);
-    this.handleSubmit.bind(this);
-    this.renderErrorMessage.bind(this);
-    this.loginForm.bind(this);
-    
-  };
-
-  // User Login info
- 
-
- errors = {
-    email: "invalid email",
-    password: "invalid password",
-  };
 
  handleSubmit = (event) => {
     //Prevent page reload
     event.preventDefault();
 
     var { email, password } = document.forms[0];
-
+    
     // Find user login info
-    const userData = JSON.parse(localStorage.getItem(email))
-
-
+    const userData = JSON.parse(localStorage.getItem(email.value))
+    
     // Compare user info
     if (userData) {
-      if (userData[0] !== password.value) {
+      if (userData.password !== password.value) {
         // Invalid password
-        this.setState({setErrorMessages:{ name: "password", message: this.state.errors.password }});
+        alert("Invalid Password")
       } else {
+        // Setting up user data to be used in 
         this.setState({
-          setIsSubmitted:true,
-          userData
+          isloggedin:true,
+          currentUser:{
+            email:email.value,
+            password:userData.password,
+            taskList:userData.tasklist
+          }
         });
-        
       }
     } else {
+      console.log("called")
       // Username not found
-      this.setState({setErrorMessages:{ name: "email", message: this.state.errors.email }});
+      this.setState({setErrorMessages:{ name: email, message: this.state.errors.email }});
     }
   };
 
-  // Generate JSX code for error message
-  renderErrorMessage = (name) =>
-    name === this.state.seterrorMessages.name && (
-      <div className="error">{this.state.setErrorMessages.message}</div>
-    );
 
-  // JSX code for login form
-  loginForm = (
-    <div className="form">
-      <form onSubmit={this.handleSubmit}>
-        <div className="input-container">
-          <label>email</label>
-          <input type="text" name="email" value={this.email} required />
-          {this.renderErrorMessage("email")}
-        </div>
-        <div className="input-container">
-          <label>Password </label>
-          <input type="password" name="pass" value={this.state.password} required />
-          {this.renderErrorMessage("pass")}
-        </div>
-        <div className="button-container">
-          <button type="submit">Sign in</button>
-        </div>
-      </form>
-    </div>
-  );
-
-  //Route for registration form
   
-render(){
-return (
-    <div className="app">
-      <div className="login-form">
-        <div className="title">Sign In</div>
-        {this.state.isSubmitted ? <div>User is successfully logged in</div> : <loginForm/>}
+
+render(){ 
+  return (
+    <div className="App">
+      
+      {this.state.isloggedin?
+      <div>Logged in Successfully
+        <Link to='/todolist' Component={<Todolist List={this.state.currentUser.taskList}/>}>Get to do list</Link>
       </div>
-      <Routes>
-        <Route path = '/registerPage' element = {<RegisterForm/>}></Route>
-      </Routes>
-      <Router>
-        <button type="button">
-          <Link to={"/registerPage"} className="nav-link">
-            Register
-          </Link>
-        </button>
-      </Router>
+
+      :(<div><h1> Login Form</h1>
+      <form onSubmit ={this.handleSubmit}>
+        <input type="email" name="email"></input>
+        <input type="passwaord" name="password"></input>
+        <button type="Submit" onClick={this.handleSubmit}>Login</button>
+        
+      </form></div>)}
     </div>
   );
-};
+ };
 };
 
 export default App;

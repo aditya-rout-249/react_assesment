@@ -1,51 +1,45 @@
-import react ,{Component} from 'react'
-import Header from "./Header";
-import ToDoList from "./ToDoList";
+import React ,{Component} from 'react'
 import Row from "./listentry"
 
-class todolist extends Component {
+class Todolist extends Component {
     constructor(props){
 			super(props);
 			this.state={
-				todolist : props.list,
-				email : props.email,
-        password : props.password
-
+        // list : [],
+				// todolist : props.list,
+				email : "props.email",
+        password :" props.password",
 			}
-			this.createlist.bind(this)
-			this.addTask.bind(this)
 		}
 		
 		createlist = () =>{
-    list = []
-    todolist.array.forEach(element => {
-			list.push(<Row value={element}></Row>)
+    const list = new Array();
+    this.state.todolist.forEach(element => {
+		list.push(<Row value={element}></Row>)
 		});
 		return list;
 		};
 
-		
-	
-		 
-	
 		addTask = (userInput) => {
-			let copy = [...this.toDoList];
+			let copy = this.state.todolist;
 			copy.push(userInput)
-		  localStorage.setItem(this.email,[this.password,copy])	
-			this.setState(todolist=copy)
-			list.push(<Row value={userInput}></Row>)
-		  ;
-		}
+			console.log(this.state.email)
+		  localStorage.setItem("aryan@gmail.com", JSON.stringify(this.state.email,{password: this.state.password,tasklist:copy}))
+			this.setState({todolist:copy})
+	
+			this.state.list.push(<Row value={userInput}></Row>);
+		};
+
 	render(){
 		return (
 			<div className="App">
 				<h1>TodoList</h1>
-				<ul>{createlist()}</ul>
+				<ul>{this.createlist()}</ul>
 				<input id="newtask"></input>
-				<button onClick={this.addTask(document.getElementById("newtask"))}> Add Task <button/>
+				<button onClick={this.addTask(document.getElementById("newtask"))}> Add Task </button>
 			</div>
 		);
 	}
 }
 
-export default todolist;
+export default new Todolist;
