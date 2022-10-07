@@ -1,10 +1,11 @@
-import react from 'react';
+import React from 'react';
+
 const Row = (input)=>{
    return (
     <div>
-        {input.value}
-         <input type="checkbox"></input>
+        {input.value};
+         <input type="checkbox"></input>;
     </div>
-   )
-}
+  );
+};
 export default Row;

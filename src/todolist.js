@@ -1,45 +1,74 @@
-import React ,{Component} from 'react'
-import Row from "./listentry"
+import React , { Component } from 'react'
 
 class Todolist extends Component {
-    constructor(props){
-			super(props);
-			this.state={
-        // list : [],
-				// todolist : props.list,
-				email : "props.email",
-        password :" props.password",
-			}
-		}
+  // Initiating Object Constructor
+  constructor (props) {
+	  super(props);
+	  this.state = {
+		  count : props.todolist.length,
+		  value : '',
+	    todolist : props.todolist,
+	    email : props.email,
+      password : props.password
+	  };
+	};
+
+	handleChange = (event) => {
+		this.setState({ value :event.target.value})
+	};
+
+  // Function to add task
+  onAddTask = (userInput) => {
+
+	  // new todo object
+		const obj = {
+		name: userInput,
+		id: this.state.count+1,
+		};
+    console.log("called")
+		let copy = this.state.todolist;
+		copy.push(obj);
 		
-		createlist = () =>{
-    const list = new Array();
-    this.state.todolist.forEach(element => {
-		list.push(<Row value={element}></Row>)
-		});
-		return list;
-		};
+		localStorage.setItem(this.state.email, JSON.stringify({ password: this.state.password, tasklist: copy}));
+		this.setState({
+			 todolist: copy,
+		   count : this.state.count+1
+			 });
+	};
+  
+  //Function To delete Task	
+  onDeleteTask = (itemId) => {
+	  this.setState({
+	    todolist: [...this.state.todolist].filter((id) => id.id !== itemId),
+	  });
+	  localStorage.setItem(this.state.email, JSON.stringify({password: this.state.password,tasklist:this.state.todolist}))
+  };	
 
-		addTask = (userInput) => {
-			let copy = this.state.todolist;
-			copy.push(userInput)
-			console.log(this.state.email)
-		  localStorage.setItem("aryan@gmail.com", JSON.stringify(this.state.email,{password: this.state.password,tasklist:copy}))
-			this.setState({todolist:copy})
-	
-			this.state.list.push(<Row value={userInput}></Row>);
-		};
+	/**/
+  
+  // Rendering Todolist Component
+  render () {
+		const mylist = this.state.todolist.map((todo) => (
+			<li key = {todo.id}>
+			{todo.name}
+			<button onClick = {() => this.onDeleteTask(todo.id)}>Remove</button>
+			</li>
+		));
+	return (
+		<div className="App">
 
-	render(){
-		return (
-			<div className="App">
-				<h1>TodoList</h1>
-				<ul>{this.createlist()}</ul>
-				<input id="newtask"></input>
-				<button onClick={this.addTask(document.getElementById("newtask"))}> Add Task </button>
-			</div>
+		{this.props.isLoggedIn?
+		<>
+		<h1>TodoList</h1>
+		 <ul>{mylist}</ul>
+		 <input onChange = {this.handleChange}></input>
+		 <button onClick = { () => this.onAddTask( this.state.value )}> Add Task </button>
+	 </>
+	 :<h1>Please Log in</h1>
+	};
+		</div>
 		);
-	}
-}
+	};
+};
 
-export default new Todolist;
+export default  Todolist;
