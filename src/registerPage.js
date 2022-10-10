@@ -1,18 +1,17 @@
-import React, { Component } from 'react';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import "./styles.css"
+import React, { Component } from "react";
+import { Button, FormControl, TextField } from "@mui/material";
+import "./styles.css";
 
 class RegisterForm extends Component {
   // react States
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state ={
-      password : '',
-      email : '',
-      isSubmitted:false,
-      };
+    this.state = {
+      password: "",
+      email: "",
+      isSubmitted: false,
     };
+  }
 
   handleSubmit = (event) => {
     //Prevent page reload
@@ -24,34 +23,69 @@ class RegisterForm extends Component {
 
     // Compare user info
     if (userData !== null) {
-      
       // user already exist
       alert("User Already Exist");
     } else {
-        this.setState({isSubmitted:true});
-        localStorage.setItem(email.value,JSON.stringify({password:password.value,tasklist:[]}));
-        alert(" User Registered successfully");
-    };
+      this.setState({ isSubmitted: true });
+      localStorage.setItem(
+        email.value,
+        JSON.stringify({ password: password.value, tasklist: [] })
+      );
+      alert(" User Registered successfully");
+    }
   };
 
-  render () {
+  RegisterForm = (
+    <div style={{ marginTop: 200, marginLeft: 600 }}>
+      <FormControl
+        onSubmit={this.handleSubmit}
+        sx={{ border: 1, borderRadius: 2 }}
+      >
+        <h1> Registeration Form</h1>
+        <TextField
+          required
+          id="outlined"
+          multiline
+          label="Email"
+          type="email"
+          name="email"
+          placeholder="Email"
+          style={{ margin: 10 }}
+        />
+        <TextField
+          required
+          id="outlined"
+          multiline
+          label="Password"
+          type="password"
+          name="password"
+          placeholder="Password"
+          style={{ margin: 10 }}
+        />
+        <br />
+        <Button
+          type="Submit"
+          variant="contained"
+          style={{ marginLeft: 40, marginRight: 40 }}
+        >
+          Register
+        </Button>
+      </FormControl>
+    </div>
+  );
+
+  render() {
+    console.log(this.props);
     return (
       <div className="App">
-        {this.state.isSubmitted
-        ?<div>Registered Successfully</div>
-        :(<div>
-          <h1> Registeration Form</h1>
-            <form onSubmit ={this.handleSubmit}>
-              <TextField required id='outlined' multiline  label='Email' type = "email" name = "email" placeholder='Email'/><br/>
-              <br/>
-              <TextField required id='outlined' multiline label='Password' type = "password" name = "password" placeholder='Password'/>
-              <br/>
-              <Button type="Submit" onClick={this.handleSubmit}>Register</Button>
-            </form>
-        </div>)
-       };
+        {this.state.isSubmitted ? (
+          <div>Registered Successfully</div>
+        ) : (
+          <>{this.RegisterForm}</>
+        )}
+        ;
       </div>
     );
-   };
-};
-export default RegisterForm;    
+  }
+}
+export default RegisterForm;
