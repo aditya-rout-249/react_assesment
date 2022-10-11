@@ -1,30 +1,25 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import Todolist from "./todolist";
 import RegisterForm from "./registerPage";
-import "./styles.css";
 import { Button, FormControl, TextField } from "@mui/material";
 
-class App extends Component {
+function App() {
   // React States
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentUser: {
-        email: "",
-        password: "",
-        taskList: [],
-      },
-      isloggedIn: false,
-    };
-  }
+  const [currentUser, setCurrentUser] = useState({
+    email: "",
+    password: "",
+    taskList: "",
+  });
+  const [isLoggedIn, setisLoggedIn] = useState(false);
 
   // User Authentication Function
-  handleSubmit = (event) => {
+  const handleSubmit = (event) => {
+    
     // Prevent page reload
     event.preventDefault();
-    let { email, password } = document.forms[0];
-
+    let { email, password } = document.forms[0]
+    console.log("called")
     // Find user login info
     let userData = JSON.parse(localStorage.getItem(email.value));
 
@@ -35,14 +30,12 @@ class App extends Component {
         alert("Invalid Password");
       } else {
         // Setting up user data to be used in
-        this.setState({
-          isloggedIn: true,
-          currentUser: {
-            email: email.value,
-            password: userData.password,
-            taskList: userData.tasklist,
-          },
+        setCurrentUser({
+          email: email.value,
+          password: userData.password,
+          taskList: userData.tasklist,
         });
+        setisLoggedIn(true)
       }
     } else {
       // Username not found
@@ -51,13 +44,13 @@ class App extends Component {
   };
 
   //LoginForm Component
-  loginForm = (
+  const loginForm = (
     <div style={{ marginTop: 200, marginLeft: 600 }}>
+      <form  onSubmit = {handleSubmit}  >
       <FormControl
-        onSubmit={this.handleSubmit}
         sx={{ border: 1, borderRadius: 2 }}
       >
-        <img src="./UserLogin.jpg" alt="User Login" />
+        <img src="/home/aryan_249/my-app/src/UserLogin.jpg" alt="User Login" />
         <TextField
           required
           id="outlined-required"
@@ -79,52 +72,49 @@ class App extends Component {
         <Button
           style={{ marginLeft: 20, marginRight: 20 }}
           variant="contained"
-          type="Submit"
+          type="submit"
         >
           Login
         </Button>
 
         <br />
 
-        <Button variant="contained">
+        <Button  type = 'button' variant="contained">
           <Link to="/registerPage">Register</Link>
         </Button>
       </FormControl>
+      </form>
     </div>
   );
 
-  render() {
-    return (
-      <div className="App">
-        <Routes>
-          <Route exact path="/registerPage" element={<RegisterForm />}></Route>
-          <Route
-            exact
-            path="/todolist"
-            element={
-              <Todolist
-                email={this.state.currentUser.email}
-                isLoggedIn={this.state.isloggedIn}
-                todolist={this.state.currentUser.taskList}
-                password={this.state.currentUser.password}
-              />
-            }
-          />
-          <Route
-            exact
-            path="/"
-            element={
-              this.state.isloggedIn ? (
-                <Link to="/todolist">Todolist</Link>
-              ) : (
-                <>{this.loginForm}</>
-              )
-            }
-          ></Route>
-        </Routes>
-      </div>
-    );
-  }
+  return (
+    <div className="App">
+      <Routes>
+        <Route exact path="/registerPage" element={<RegisterForm />}></Route>
+        <Route
+          exact
+          path="/todolist"
+          element={
+            <Todolist
+              email={currentUser.email}
+              isLoggedIn={isLoggedIn}
+            />
+          }
+        />
+        <Route
+          exact
+          path="/"
+          element={
+            isLoggedIn ? (
+              <Link to="/todolist">Todolist</Link>
+            ) : (
+              <>{loginForm}</>
+            )
+          }
+        ></Route>
+      </Routes>
+    </div>
+  );
 }
 
 export default App;
