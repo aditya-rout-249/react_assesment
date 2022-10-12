@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
+import {useNavigate} from "react-router-dom";
 import { Button, FormControl, TextField } from "@mui/material";
 
 function RegisterForm() {
-  // react State
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
+  const navigate = useNavigate()
+  
+  
   const handleSubmit = (event) => {
     //Prevent page reload
     event.preventDefault();
@@ -20,12 +21,13 @@ function RegisterForm() {
       alert("User Already Exist");
     } else {
      // console.log("here")
-      setIsSubmitted(true);
+      
       localStorage.setItem(
         email.value,
         JSON.stringify({ password: password.value, tasklist: [] })
       );
       alert(" User Registered successfully");
+      navigate('/')
     }
   };
 
@@ -72,7 +74,9 @@ function RegisterForm() {
 
   return (
     <div className="App">
-      {isSubmitted ? <div>Registered Successfully</div> : <>{RegisterForm}</>};
+       <>
+       {RegisterForm}
+       </>
     </div>
   );
 }
