@@ -1,9 +1,9 @@
-import React from 'react'
-import Loginform from './components/loginpage'
+import React from "react";
+import Loginform from "./components/loginpage";
 function App() {
   return (
     <div className="App">
-      <Loginform/>
+      <Loginform />
     </div>
   );
 }

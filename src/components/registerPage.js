@@ -1,43 +1,40 @@
 import React from "react";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button, FormControl, TextField } from "@mui/material";
+import { getUsers, register } from "../Redux/reducers/taskListSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 function RegisterForm() {
-  const navigate = useNavigate()
-  
-  
-  const handleSubmit = (event) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const userData = useSelector(getUsers);
+
+  const HandleSubmit = (event) => {
     //Prevent page reload
     event.preventDefault();
     let { email, password } = document.forms[0];
-    console.log("here")
+    dispatch(register({ email: email.value, password: password.value }));
 
     // Find user login info
-    const userData = localStorage.getItem(email.value);
+    const currentUser = userData[email.value];
 
     // Compare user info
-    if (userData !== null) {
+    if (currentUser !== null) {
       // user already exist
       alert("User Already Exist");
     } else {
-     // console.log("here")
-      
-      localStorage.setItem(
-        email.value,
-        JSON.stringify({ password: password.value, tasklist: [] })
-      );
+      let newUser = { email: email.value, password: password.value };
+      dispatch(register(newUser));
       alert(" User Registered successfully");
-      navigate('/')
+      navigate("/");
     }
   };
 
   // User Registration form component
   const RegisterForm = (
     <div style={{ marginTop: 200, marginLeft: 600 }}>
-      <form onSubmit={handleSubmit}>
-        <FormControl
-          sx={{ border: 1, borderRadius: 2 }}
-        >
+      <form onSubmit={HandleSubmit}>
+        <FormControl sx={{ border: 1, borderRadius: 2 }}>
           <h6> Registeration Form</h6>
           <TextField
             required
@@ -74,9 +71,7 @@ function RegisterForm() {
 
   return (
     <div className="App">
-       <>
-       {RegisterForm}
-       </>
+      <>{RegisterForm}</>
     </div>
   );
 }

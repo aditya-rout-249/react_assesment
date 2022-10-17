@@ -2,15 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Button, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Task from "./task";
-function TaskList({ email, isLoggedIn }) {
+import { selectlogin } from "../Redux/reducers/LoginSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../Redux/reducers/LoginSlice";
+import { getUsers, saveUserStatus } from "../Redux/reducers/taskListSlice";
+function TaskList() {
+  const dispatch = useDispatch();
   // Initiating Object Constructor
-  const userData = JSON.parse(localStorage.getItem(email));
-  const [value, setValue] = useState();
-  const [taskList, setTaskList] = useState(userData.tasklist);
-
+  const { email, isLoggedIn, taskList } = useSelector(selectlogin);
+  const userData = useSelector(getUsers)[email];
   const [date, setDate] = useState(new Date());
-  const [status, setStatus] = useState(isLoggedIn);
-  
+  const [tasklist, setTaskList] = useState(taskList);
+  const [value, setValue] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,20 +29,16 @@ function TaskList({ email, isLoggedIn }) {
 
   // Function to add task
   const onAddTask = (taskValue) => {
+    const userData = JSON.parse(localStorage.getItem(email));
+
     // new todo object
     const task = {
       name: taskValue,
       id: new Date(),
     };
+    console.log(userData);
 
-    localStorage.setItem(
-      email,
-      JSON.stringify({
-        password: userData.password,
-        tasklist: [...taskList, task],
-      })
-    );
-    setTaskList([...taskList, task]);
+    setTaskList([...tasklist, task]);
   };
 
   const clearAll = () => {
@@ -49,26 +48,28 @@ function TaskList({ email, isLoggedIn }) {
   };
 
   //Logout Function
-  const logout = () => {
-    setStatus(false);
-    navigate('/')
+  const Logout = () => {
+    const user = { email: email, taskList: tasklist };
+    dispatch(logout());
+    dispatch(saveUserStatus(user));
+    navigate("/");
   };
 
   //Function To delete Task
   const onDeleteTask = (itemId) => {
-    setTaskList([...taskList].filter((id) => id.id !== itemId));
-    userData.tasklist = [...taskList].filter((id) => id.id !== itemId);
+    setTaskList([...tasklist].filter((id) => id.id !== itemId));
+    userData.tasklist = [...tasklist].filter((id) => id.id !== itemId);
     localStorage.setItem(email, JSON.stringify(userData));
   };
 
   return (
     <div className="App">
-      {status ? (
+      {isLoggedIn ? (
         <>
           <h1>TodoList</h1>
           <h2 style={{ marginLeft: 300 }}> {date.toLocaleTimeString()}</h2>
           <ul>
-            {taskList.map((task) => (
+            {tasklist.map((task) => (
               <Task task={task} onDeleteTask={onDeleteTask} />
             ))}
           </ul>
@@ -76,7 +77,7 @@ function TaskList({ email, isLoggedIn }) {
           <br />
           <Button onClick={() => onAddTask(value)}> Add Task </Button>
           <br />
-          <Button onClick={() => logout()}>Logout</Button>
+          <Button onClick={() => Logout()}>Logout</Button>
           <br />
           <Button onClick={() => clearAll()}>clearAll</Button>
         </>

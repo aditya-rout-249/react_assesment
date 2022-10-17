@@ -1,18 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import Todolist from "./taskList";
 import RegisterForm from "./registerPage";
 import { Button, FormControl, TextField } from "@mui/material";
+import { logingin, selectlogin } from "../Redux/reducers/LoginSlice";
+import { getUsers } from "../Redux/reducers/taskListSlice";
+import { useSelector, useDispatch } from "react-redux";
 
 function Loginform() {
   // React States
-  const [currentUser, setCurrentUser] = useState({
-    email: "",
-    password: "",
-    taskList: "",
-  });
-  const [isLoggedIn, setisLoggedIn] = useState(false);
-
+  const { email, isLoggedIn } = useSelector(selectlogin);
+  const userData = useSelector(getUsers);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   //Function to Navigate to Register Page
@@ -21,28 +20,23 @@ function Loginform() {
   };
 
   // User Authentication Function
-  const handleSubmit = (event) => {
+  const HandleSubmit = (event) => {
     // Prevent page reload
     event.preventDefault();
     let { email, password } = document.forms[0];
 
     // Find user login info
-    let userData = JSON.parse(localStorage.getItem(email.value));
 
+    const currentUser = userData[email.value];
     // Compare user info
-    if (userData) {
-      if (userData.password !== password.value) {
+    if (currentUser) {
+      if (currentUser.password !== password.value) {
         // Invalid password
         alert("Invalid Password");
       } else {
         // Setting up user data to be used in
-        setCurrentUser({
-          email: email.value,
-          password: userData.password,
-          taskList: userData.tasklist,
-        });
-        setisLoggedIn(true);
-        navigate('/taskList')
+        dispatch(logingin({ ...currentUser, email: email.value }));
+        navigate("/taskList");
       }
     } else {
       // Username not found
@@ -53,7 +47,7 @@ function Loginform() {
   //LoginForm Component
   const loginForm = (
     <div style={{ marginTop: 200, marginLeft: 600 }}>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={HandleSubmit}>
         <FormControl sx={{ border: 1, borderRadius: 2 }}>
           <img
             src="/home/aryan_249/my-app/src/UserLogin.jpg"
@@ -106,9 +100,7 @@ function Loginform() {
         <Route
           exact
           path="/taskList"
-          element={
-            <Todolist email={currentUser.email} isLoggedIn={isLoggedIn} />
-          }
+          element={<Todolist email={email} isLoggedIn={isLoggedIn} />}
         />
         <Route exact path="/" element={loginForm} />
       </Routes>
