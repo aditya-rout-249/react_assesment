@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Button, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Task from "./task";
-import { selectlogin } from "../Redux/reducers/LoginSlice";
+import { selectlogin } from "../Redux/reducers/currentUserSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../Redux/reducers/LoginSlice";
-import { getUsers, saveUserStatus } from "../Redux/reducers/taskListSlice";
+import { logout } from "../Redux/reducers/currentUserSlice";
+import { getUsers, saveUserStatus } from "../Redux/reducers/UsersSlice";
 function TaskList() {
   const dispatch = useDispatch();
   // Initiating Object Constructor

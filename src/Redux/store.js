@@ -1,20 +1,20 @@
 import { configureStore } from "@reduxjs/toolkit";
-import loginReducer from "./reducers/LoginSlice";
+import currentUserReducer from "./reducers/LoginSlice";
 import { persistReducer, persistStore } from "redux-persist";
-import storageReducer from "./reducers/taskListSlice";
+import usersReducer from "./reducers/taskListSlice";
 import storage from "redux-persist/lib/storage";
 import thunk from "redux-thunk";
 
 const persistConfig = {
-  key: "storage",
+  key: "users",
   storage,
 };
 
-const persistedReducer = persistReducer(persistConfig, storageReducer);
+const persistedReducer = persistReducer(persistConfig, usersReducer);
 
 export const store = configureStore({
   reducer: {
-    login: loginReducer,
+    login: currentUserReducer,
     storage: persistedReducer,
   },
   middleware: [thunk],

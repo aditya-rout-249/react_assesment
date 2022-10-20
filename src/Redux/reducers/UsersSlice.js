@@ -1,27 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const storageSlice = createSlice({
-  name: "storage",
+const usersSlice = createSlice({
+  name: "users",
   initialState: {
-    users: {},
+    
   },
   reducers: {
     register: (state, action) => {
       let user = { password: action.payload.password, tasklist: [] };
       let email = action.payload.email;
-      state.users[email] = user;
+      state[email] = user;
     },
     saveUserStatus: (state, action) => {
       const { email, taskList } = action.payload;
-      const user = state.users[email];
+      const user = state[email];
       user.taskList = taskList;
-      state.users[email] = user;
+      state[email] = user;
     },
   },
 });
 
-export const { register, saveUserStatus } = storageSlice.actions;
+export const { register, saveUserStatus } = usersSlice.actions;
 
-export const getUsers = (state) => state.storage.users;
+export const selectUsers = (state) => state.users;
 
-export default storageSlice.reducer;
+export default usersSlice.reducer;
